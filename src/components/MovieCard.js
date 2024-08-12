@@ -13,13 +13,13 @@ const MovieCard = ({posterPath, title, overview, releaseDate}) => {
   return (
     <div className='w-36 md:w-48 pr-4'>
         <img onClick={handleImageDetails} src={IMG_CDN_URL+ posterPath} alt='Movie Card' />
-        {showDetails && (
+        {/* {showDetails && (
           <div>
             <h2>{title}</h2>
             <p>{overview}</p>
             <h3>{releaseDate}</h3>
           </div>
-        )}
+        )} */}
     </div>
   )
 }

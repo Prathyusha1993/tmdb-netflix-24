@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { useSelector } from 'react-redux';
@@ -10,12 +10,14 @@ import { HEADER_LOGO } from '../utils/constants';
 import { toggleGPTSearchView } from '../utils/gptSlice';
 import { SUPPORTED_LANGUAGES } from '../utils/constants';
 import { changeLanguage } from '../utils/configSlice';
+import { toggleTvShowsView } from '../utils/tvShowSlice';
 
 const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((store) => store.user);
     const showGptSearch = useSelector(store => store.gpt.showGptSearch)
+    const showTvShows = useSelector(store => store.tv.showTvShows)
 
     const handleSignout = () => {
         signOut(auth).then(() => {
@@ -49,7 +51,29 @@ const Header = () => {
     }, []);
 
     const handleGPTSearchClick = () => {
-        dispatch(toggleGPTSearchView());
+        if(showGptSearch){
+            dispatch(toggleGPTSearchView());
+            navigate('/browse');
+        } else {
+            if(showTvShows){
+                dispatch(toggleTvShowsView());
+            }
+            dispatch(toggleGPTSearchView());
+            navigate('/browse');
+        }
+    };
+
+    const handleTvShowsClick = () => {
+        if(showTvShows){
+            dispatch(toggleTvShowsView());
+            navigate('/browse');
+        } else {
+            if(showGptSearch){
+                dispatch(toggleGPTSearchView());
+            }
+            dispatch(toggleTvShowsView());
+            navigate('/browse');
+        }
     };
 
     const handleLanguageChange = (e) => {
@@ -69,6 +93,7 @@ const Header = () => {
                             <option key={language.identifier} value={language.identifier}>{language.name}</option>
                         ))}
                     </select>)}
+                    <button onClick={handleTvShowsClick} className='px-4 mx-4 bg-purple-500 text-white rounded-lg'>{showTvShows ? 'HomePage': 'Tv Shows'}</button>
                     <button onClick={handleGPTSearchClick} className='px-4 mx-4 bg-purple-500 text-white rounded-lg'>{showGptSearch ? 'HomePage' : 'GPT Search'} </button>
                     <img className='w-10 h-10' src={user?.photoURL} alt='userIcon' />
                     <button onClick={handleSignout} className='font-bold text-white m-2'>Sign Out</button>
